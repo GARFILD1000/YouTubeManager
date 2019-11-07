@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -38,26 +39,39 @@ class SearchFragment : Fragment() {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             setHasFixedSize(true)
         }
+
+        searchQueryView.setOnEditorActionListener{view, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH){
+                performSearch()
+                true
+            }
+            false
+        }
+
         searchButton.setOnClickListener {
-            val searchQuery = searchQueryView.text.toString()
-            youtubeService.findVideo(searchQuery, 10, null).enqueue(object: Callback<YoutubeSearchResponse>{
-                override fun onFailure(call: Call<YoutubeSearchResponse>, t: Throwable) {
-
-                }
-
-                override fun onResponse(
-                    call: Call<YoutubeSearchResponse>,
-                    response: Response<YoutubeSearchResponse>
-                ) {
-                    if (response.isSuccessful && response.body() != null){
-                        response.body()!!.let{ response ->
-                            searchAdapter.setItems(response.items)
-                        }
-                    }
-                }
-            })
+            performSearch()
         }
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    fun performSearch(){
+        val searchQuery = searchQueryView.text.toString()
+        youtubeService.findVideo(searchQuery, 10, null).enqueue(object: Callback<YoutubeSearchResponse>{
+            override fun onFailure(call: Call<YoutubeSearchResponse>, t: Throwable) {
+
+            }
+
+            override fun onResponse(
+                call: Call<YoutubeSearchResponse>,
+                response: Response<YoutubeSearchResponse>
+            ) {
+                if (response.isSuccessful && response.body() != null){
+                    response.body()!!.let{ response ->
+                        searchAdapter.setItems(response.items)
+                    }
+                }
+            }
+        })
     }
 
 

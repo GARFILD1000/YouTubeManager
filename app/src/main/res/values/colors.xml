@@ -8,4 +8,5 @@
     <color name="colorBackgroundDark">#272727</color>
 
     <color name="colorTextDefault">#282828</color>
+    <color name="colorTextLight">#FFFFFF</color>
 </resources>
