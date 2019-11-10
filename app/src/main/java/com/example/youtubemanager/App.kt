@@ -17,7 +17,6 @@ class App : Application() {
 
     override fun onCreate() {
         instance = this
-
         super.onCreate()
     }
 

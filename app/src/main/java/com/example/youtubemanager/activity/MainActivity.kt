@@ -9,7 +9,7 @@ import androidx.navigation.Navigation
 import com.example.youtubemanager.App
 
 class MainActivity : AppCompatActivity() {
-    companion object{
+    companion object {
         const val PERMISSIONS_REQUEST_CODE = 20001
     }
 
@@ -24,13 +24,21 @@ class MainActivity : AppCompatActivity() {
         checkAllNeededPermissions()
     }
 
-    private fun checkAllNeededPermissions(){
+    private fun checkAllNeededPermissions() {
         val application = (applicationContext as App)
         val neededPermissions = arrayOf(Manifest.permission.INTERNET)
 
         val allPermissionsGranted = application.checkPermissions(this, *neededPermissions)
-        if (!allPermissionsGranted){
+        if (!allPermissionsGranted) {
             application.requestPermissions(this, PERMISSIONS_REQUEST_CODE, *neededPermissions)
         }
+    }
+
+    fun goWatchVideo() {
+        navController.navigate(R.id.playVideoFragment)
+    }
+
+    fun goToChannel() {
+        navController.navigate(R.id.channelFragment)
     }
 }

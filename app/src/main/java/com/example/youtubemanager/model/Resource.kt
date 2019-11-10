@@ -1,11 +1,13 @@
 package com.example.youtubemanager.model
 
-import java.util.HashMap
+abstract class Resource{
+    companion object{
+        const val KIND_YOUTUBE_VIDEO = "youtube#video"
+        const val KIND_YOUTUBE_CHANNEL = "youtube#channel"
+    }
 
-class Resource{
     var kind = ""
     var etag = ""
-    var id: ResourceId? = null
     var snippet: ResourceSnippet? = null
 
     class ResourceId{
@@ -14,4 +16,5 @@ class Resource{
         var channelId = ""
         var playlistId = ""
     }
+
 }
