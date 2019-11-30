@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "801560487517",
+    "firebase_url": "https://manager-6f870.firebaseio.com",
+    "project_id": "manager-6f870",
+    "storage_bucket": "manager-6f870.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:801560487517:android:7ec490b605230b69fecfb4",
+        "android_client_info": {
+          "package_name": "com.example.youtubemanager"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "801560487517-527r0a8smvbrr1enom9hb26r7qbpo0u6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5W_3FOfkgBcrcCv6w0wHA-C0EENyEq4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "801560487517-527r0a8smvbrr1enom9hb26r7qbpo0u6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
