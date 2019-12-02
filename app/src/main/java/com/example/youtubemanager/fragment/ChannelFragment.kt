@@ -34,9 +34,14 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.graphics.drawable.RoundedBitmapDrawable
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.Bitmap
+import com.example.youtubemanager.util.intoAsCircle
+import com.example.youtubemanager.util.intoWithRounding
+import com.example.youtubemanager.util.notifyObserver
+import com.example.youtubemanager.util.onScrolledToEnd
 import com.squareup.picasso.Callback as PicassoCallback
 import retrofit2.Callback
 import java.lang.Exception
+import java.util.*
 
 
 class ChannelFragment : Fragment() {
@@ -59,13 +64,30 @@ class ChannelFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         channelViewModel = ViewModelProviders.of(activity!!).get(YoutubeChannelViewModel::class.java)
         playerViewModel = ViewModelProviders.of(activity!!).get(YoutubePlayerViewModel::class.java)
-        channelViewModel.currentChannelLiveData.observe(this, object : Observer<SearchResource?>{
+
+        channelViewModel.currentChannelLiveData.observe(viewLifecycleOwner, object : Observer<SearchResource?>{
             override fun onChanged(resource: SearchResource?) {
                 resource?.let{
                     setPreliminaryChannelInfo(it)
                     getFullChannelInfo(it.id!!.channelId)
+                    getLatestChannelVideos(it.id!!.channelId)
+                }
+            }
+        })
+        channelViewModel.channelFullInfo.observe(viewLifecycleOwner, object: Observer<ChannelResource?>{
+            override fun onChanged(fullChannelInfo: ChannelResource?) {
+                fullChannelInfo?.let{
+                    setFullChannelInfo(it)
+                }
+            }
+        })
+        channelViewModel.channelContentLiveData.observe(viewLifecycleOwner, object: Observer<LinkedList<SearchResource>>{
+            override fun onChanged(newContent: LinkedList<SearchResource>?) {
+                newContent?.let{
+                    videoListAdapter.setItems(it)
                 }
             }
         })
@@ -73,9 +95,10 @@ class ChannelFragment : Fragment() {
         videoList.apply {
             adapter = videoListAdapter
             layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+            onScrolledToEnd {
+                getNextChannelVideos()
+            }
         }
-
-        super.onViewCreated(view, savedInstanceState)
     }
 
     private fun getFullChannelInfo(channelId: String){
@@ -84,17 +107,14 @@ class ChannelFragment : Fragment() {
             .enqueue(object: Callback<YoutubeResponse<ChannelResource>>{
                 override fun onFailure(call: Call<YoutubeResponse<ChannelResource>>, t: Throwable) {
                 }
-
                 override fun onResponse(
                     call: Call<YoutubeResponse<ChannelResource>>,
                     response: Response<YoutubeResponse<ChannelResource>>
                 ) {
                     response.body()?.items?.getOrNull(0)?.let{
-                        setFullChannelInfo(it)
-                        getLatestChannelVideos(it.id)
+                        channelViewModel.channelFullInfo.postValue(it)
                     }
                 }
-
             })
     }
 
@@ -105,24 +125,13 @@ class ChannelFragment : Fragment() {
     private fun setFullChannelInfo(channelResource: ChannelResource){
         channelTitleView.text = channelResource.brandingSettings?.channel?.title
         channelResource.snippet?.thumbnails?.get(ResourceThumbnail.TYPE_DEFAULT)?.let{
-            Picasso.get().load(it.url).into(channelPreview, object : PicassoCallback {
-                override fun onError(e: Exception?) {}
-                override fun onSuccess() {
-                    val imageBitmap = (channelPreview.getDrawable() as BitmapDrawable).bitmap
-                    val imageDrawable = RoundedBitmapDrawableFactory.create(resources, imageBitmap)
-                    imageDrawable.isCircular = true
-                    imageDrawable.cornerRadius =
-                        Math.max(imageBitmap.width, imageBitmap.height) / 2.0f
-                    channelPreview.setImageDrawable(imageDrawable)
-                }
-            })
+            Picasso.get().load(it.url).intoAsCircle(channelPreview, resources)
         }
-
     }
 
     private fun getLatestChannelVideos(channelId: String){
         GoogleApiService.getYoutubeService()
-            .getChannelVideos(channelId)
+            .getChannelVideos(channelId, 10, null)
             .enqueue(object: Callback<YoutubeResponse<SearchResource>>{
                 override fun onFailure(call: Call<YoutubeResponse<SearchResource>>, t: Throwable) {
 
@@ -132,14 +141,35 @@ class ChannelFragment : Fragment() {
                     call: Call<YoutubeResponse<SearchResource>>,
                     response: Response<YoutubeResponse<SearchResource>>
                 ) {
-                    response.body()?.items?.let{
-                        setLatestChannelVideos(it)
+                    response.body()?.let{
+                        channelViewModel.channelContentLiveData.value?.addAll(it.items)
+                        channelViewModel.channelContentLiveData.notifyObserver()
+                        channelViewModel.nextPageToken = it.nextPageToken
+                        channelViewModel.previousPageToken = it.prevPageToken
                     }
                 }
             })
     }
 
-    private fun setLatestChannelVideos(videoResource: List<SearchResource>){
-        videoListAdapter.setItems(videoResource)
+    private fun getNextChannelVideos(){
+        val channelId = channelViewModel.channelFullInfo.value?.id ?: return
+        val nextPageToken = channelViewModel.nextPageToken ?: return
+        GoogleApiService.getYoutubeService()
+            .getChannelVideos(channelId, 10, nextPageToken)
+            .enqueue(object: Callback<YoutubeResponse<SearchResource>>{
+                override fun onFailure(call: Call<YoutubeResponse<SearchResource>>, t: Throwable) {}
+
+                override fun onResponse(
+                    call: Call<YoutubeResponse<SearchResource>>,
+                    response: Response<YoutubeResponse<SearchResource>>
+                ) {
+                    response.body()?.let{
+                        channelViewModel.channelContentLiveData.value?.addAll(it.items)
+                        channelViewModel.channelContentLiveData.notifyObserver()
+                        channelViewModel.nextPageToken = it.nextPageToken
+                        channelViewModel.previousPageToken = it.prevPageToken
+                    }
+                }
+            })
     }
 }

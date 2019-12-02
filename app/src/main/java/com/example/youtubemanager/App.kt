@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
+import android.content.res.Resources
 import android.os.Build
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -11,7 +12,7 @@ import androidx.core.content.ContextCompat
 class App : Application() {
     companion object{
         lateinit var instance: App
-
+        fun getResources(): Resources = instance.resources
         fun getContext(): Context = instance.applicationContext
     }
 

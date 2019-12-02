@@ -12,6 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
+            app:cardCornerRadius="@dimen/rounding"
             android:background="@color/colorBackgroundLight">
 
             <LinearLayout
@@ -20,15 +21,23 @@
                 android:layout_margin="5dp"
                 android:orientation="vertical">
 
-                <ImageView
-                    android:id="@+id/thumbnail"
+                <FrameLayout
+                    android:id="@+id/thumbnailContainer"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="180dp"
-                    android:maxHeight="240dp"
-                    android:layout_marginStart="5dp"
-                    android:layout_marginEnd="5dp"
-                    android:src="@drawable/ic_search_placeholder" />
+                    android:background="@drawable/shape_container_rounded">
+
+                    <ImageView
+                        android:id="@+id/thumbnail"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        android:layout_marginEnd="5dp"
+                        android:maxHeight="240dp"
+                        android:minHeight="180dp"
+                        android:src="@drawable/ic_search_placeholder" />
+
+                </FrameLayout>
 
                 <TextView
                     android:id="@+id/title"
@@ -40,7 +49,7 @@
                     android:maxLines="2"
                     android:text="Title"
                     android:textColor="@color/colorTextDefault"
-                    android:textSize="18sp"/>
+                    android:textSize="18sp" />
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>

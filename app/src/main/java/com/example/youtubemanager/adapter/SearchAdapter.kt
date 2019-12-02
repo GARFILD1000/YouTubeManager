@@ -4,10 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.example.youtubemanager.App
 import com.example.youtubemanager.R
 import com.example.youtubemanager.databinding.SearchListElementBinding
 import com.example.youtubemanager.model.SearchResource
 import com.example.youtubemanager.model.ResourceThumbnail
+import com.example.youtubemanager.util.intoWithRounding
 import com.squareup.picasso.Picasso
 import java.util.*
 
@@ -57,13 +59,17 @@ class SearchAdapter: RecyclerView.Adapter<SearchAdapter.SearchViewHolder>(){
 
     inner class SearchViewHolder(binding: SearchListElementBinding) : RecyclerView.ViewHolder(binding.root){
         val titleView = binding.title
-        val thumbnailView = binding.thumbnail
+        val thumbnailView = binding.thumbnail.apply{
+            clipToOutline = true
+        }
+        val thumbnailContainer = binding.thumbnailContainer
 
 
         fun bind(item: SearchResource){
             titleView.text = item.snippet?.title
             item.snippet?.thumbnails?.get(ResourceThumbnail.TYPE_MEDIUM)?.let{
-                Picasso.get().load(it.url).into(thumbnailView)
+                val res = App.getResources()
+                Picasso.get().load(it.url).intoWithRounding(thumbnailView, res, res.getDimension(R.dimen.rounding))
             }
             titleView.setOnClickListener{
                 if (adapterPosition != RecyclerView.NO_POSITION){

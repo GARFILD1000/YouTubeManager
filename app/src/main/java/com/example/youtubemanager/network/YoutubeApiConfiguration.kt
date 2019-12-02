@@ -12,7 +12,7 @@ import retrofit2.http.Query
 
 interface YoutubeApiConfiguration {
     companion object {
-        private val API_KEY = App.getContext().getString(R.string.api_key)
+        private val API_KEY = App.getContext().getString(R.string.apiKey)
     }
 
     @GET("/youtube/v3/search")
@@ -41,6 +41,8 @@ interface YoutubeApiConfiguration {
     @GET("/youtube/v3/search")
     fun getChannelVideos(
         @Query("channelId") channelId: String,
+        @Query("maxResults") maxCount: Int,
+        @Query("pageToken") pageToken: String?,
         @Query("order") order: String = "date",
         @Query("part") partParameter: String = "snippet",
         @Query("key") key: String = API_KEY

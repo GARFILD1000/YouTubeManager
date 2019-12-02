@@ -9,4 +9,6 @@ class YoutubeSearchViewModel: ViewModel(){
     var searchLiveData = MutableLiveData<LinkedList<SearchResource>>().apply{
         postValue(LinkedList())
     }
+    var nextPageToken: String? = null
+    var previousPageToken: String? = null
 }

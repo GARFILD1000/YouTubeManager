@@ -1,5 +1,7 @@
 <resources>
-    <string name="app_name">YouTubeManager</string>
+    <string name="appName">YouTubeManager</string>
 
-    <string name="api_key">AIzaSyDFnxBA5GUygBqYwGwotvDpdBn0w6XqcGM</string>
+    <string name="apiKey">AIzaSyDFnxBA5GUygBqYwGwotvDpdBn0w6XqcGM</string>
+
+    <string name="appLabel">YouTubeManager</string>
 </resources>

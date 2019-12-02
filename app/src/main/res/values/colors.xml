@@ -11,4 +11,6 @@
     <color name="colorTextDefault">#282828</color>
     <color name="colorTextSecondary">#404040</color>
     <color name="colorTextLight">#FFFFFF</color>
+
+    <color name="colorProgressLight">#FFFFFF</color>
 </resources>

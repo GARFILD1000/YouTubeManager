@@ -33,7 +33,7 @@ class PlayVideoFragment: Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         playerViewModel = ViewModelProviders.of(activity!!).get(YoutubePlayerViewModel::class.java)
-        playerViewModel.cuddentVideoLiveData.observe(this, object: Observer<SearchResource?>{
+        playerViewModel.cuddentVideoLiveData.observe(viewLifecycleOwner, object: Observer<SearchResource?>{
             override fun onChanged(resource: SearchResource?) {
                 resource?.let{
                     setPreliminaryVideoInfo(it)

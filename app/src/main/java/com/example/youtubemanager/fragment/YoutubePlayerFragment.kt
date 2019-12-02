@@ -34,7 +34,7 @@ class YoutubePlayerFragment : Fragment(), YouTubePlayerListener {
         super.onViewCreated(view, savedInstanceState)
         playerViewModel = ViewModelProviders.of(activity!!)
             .get(YoutubePlayerViewModel::class.java)
-        playerViewModel.cuddentVideoLiveData.observe(this, object: Observer<SearchResource?>{
+        playerViewModel.cuddentVideoLiveData.observe(viewLifecycleOwner, object: Observer<SearchResource?>{
             override fun onChanged(data: SearchResource?) {
                 data?.id?.videoId?.let{
                     youTubePlayer?.loadVideo(it, 0f)
